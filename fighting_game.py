@@ -12,10 +12,10 @@ from ursina import *
 class Player(Entity):
     """Player class representing each fighter in the game."""
     
-    def __init__(self, position, color, controls, player_name):
+    def __init__(self, position, player_color, controls, player_name):
         super().__init__(
             model='cube',
-            color=color,
+            color=player_color,
             position=position,
             scale=(1, 2, 1),
             collider='box'
@@ -32,14 +32,14 @@ class Player(Entity):
         # Create health bar above player
         self.health_bar_bg = Entity(
             model='quad',
-            color=color.rgb,
+            color=color.black50,
             scale=(1.5, 0.2),
             position=self.position + Vec3(0, 2.5, 0),
             billboard=True
         )
         self.health_bar = Entity(
             model='quad',
-            color=color.tint(0.5),
+            color=player_color,
             scale=(1.5, 0.15),
             position=self.position + Vec3(0, 2.5, 0.01),
             billboard=True
@@ -137,21 +137,21 @@ class Game:
             model='plane',
             scale=(20, 1, 20),
             texture='white_cube',
-            color=color.rgb(100, 100, 100),
+            color=color.gray,
             collider='box'
         )
         
         # Create players
         self.player1 = Player(
             position=Vec3(-5, 1, 0),
-            color=color.red,
+            player_color=color.red,
             controls={'forward': 'w', 'back': 's', 'left': 'a', 'right': 'd', 'attack': 'f'},
             player_name='Player 1'
         )
         
         self.player2 = Player(
             position=Vec3(5, 1, 0),
-            color=color.blue,
+            player_color=color.blue,
             controls={'forward': 'up arrow', 'back': 'down arrow', 'left': 'left arrow', 'right': 'right arrow', 'attack': 'm'},
             player_name='Player 2'
         )
@@ -280,7 +280,7 @@ def main():
     
     # Set up lighting
     DirectionalLight(y=2, z=3, shadows=True)
-    AmbientLight(color=color.rgb(150, 150, 150))
+    AmbientLight(color=color.rgba(150, 150, 150, 255))
     
     # Run the game
     app.run()
