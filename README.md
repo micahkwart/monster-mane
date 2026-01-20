@@ -27,7 +27,25 @@ Monster Mane is a local multiplayer 3D fighting game where two players battle in
 
 ## How to Run
 
-### Easy Way (Double-Click to Launch)
+### Easiest Way (Desktop Shortcut)
+
+Create a desktop shortcut icon for easy access:
+
+**Windows Users:**
+- Double-click `create_shortcut_windows.bat`
+- A "Monster Mane" icon will appear on your desktop
+
+**Linux Users:**
+- Double-click `create_shortcut_linux.sh`
+- A "Monster Mane" icon will appear on your desktop
+
+**Mac Users:**
+- Double-click `create_shortcut_mac.sh`
+- A "Monster Mane" icon will appear on your desktop
+
+After creating the shortcut, just double-click the desktop icon to play!
+
+### Alternative: Direct Launch
 
 **Windows Users:**
 - Double-click `launch_game.bat`
