@@ -2,6 +2,8 @@
 
 A simple 3D fighting game prototype built with Python and the Ursina engine.
 
+> **Share with Friends:** Open `index.html` in a browser for a shareable game info page with download links!
+
 ## Description
 
 Monster Mane is a local multiplayer 3D fighting game where two players battle in an arena. Each player controls a cube-like character with movement and attack capabilities. The goal is to reduce your opponent's health to zero to win!
