@@ -27,6 +27,18 @@ Monster Mane is a local multiplayer 3D fighting game where two players battle in
 
 ## How to Run
 
+### Easy Way (Double-Click to Launch)
+
+**Windows Users:**
+- Double-click `launch_game.bat`
+
+**Mac/Linux Users:**
+- Double-click `launch_game.sh` (or run `./launch_game.sh` from terminal)
+
+The launcher will automatically install dependencies if needed and start the game.
+
+### Command Line
+
 ```bash
 python fighting_game.py
 ```
