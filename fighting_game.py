@@ -91,8 +91,8 @@ class Player(Entity):
             self.attack_cooldown = 0.5
             
             # Check if other player is in range
-            distance = distance(self.position, other_player.position)
-            if distance < 2.5:
+            player_distance = distance(self.position, other_player.position)
+            if player_distance < 2.5:
                 other_player.take_damage(10)
                 
             # Visual feedback - scale up briefly
