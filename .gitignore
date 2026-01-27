@@ -1,0 +1,7 @@
+# Dependencies and libraries
+lib/
+
+# Temporary files
+*.tmp
+*.log
+.DS_Store
