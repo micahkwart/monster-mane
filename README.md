@@ -10,7 +10,7 @@ An exciting 3D browser-based game where you defend yourself against attacking mo
 
 ## 🎯 Game Features
 
-- **3D Graphics**: Fully rendered 3D environment using Three.js
+- **3D Graphics**: Pseudo-3D environment with custom projection rendering
 - **Player Character**: Control a character in first-person view
 - **Enemy Waves**: Monsters continuously spawn and attack you
 - **10 Unique Powers**: Each with different abilities and cooldowns
@@ -21,10 +21,9 @@ An exciting 3D browser-based game where you defend yourself against attacking mo
 ## 🕹️ Controls
 
 - **WASD** - Move around the map
-- **Mouse** - Look around
+- **Arrow Keys** - Look around (rotate camera)
 - **1-9, 0** - Activate powers (each number key corresponds to a different power)
 - **B** - Open/Close shop
-- **Click** - Lock pointer to start playing
 
 ## ⚡ Powers
 
@@ -43,9 +42,9 @@ An exciting 3D browser-based game where you defend yourself against attacking mo
 
 - **Health Potion** (50 coins) - Restore 50 health
 - **Max Health +20** (100 coins) - Permanently increase max health
-- **Damage Boost** (150 coins) - Increase all power damage by 20%
-- **Speed Boost** (80 coins) - Move faster
-- **Cooldown Reduction** (200 coins) - Reduce all power cooldowns by 20%
+- **Damage Boost** (150 coins) - Increase all power damage by 10%
+- **Speed Boost** (80 coins) - Increase movement speed by 15% (max 300%)
+- **Cooldown Reduction** (200 coins) - Reduce all power cooldowns by 10% (min 500ms)
 
 ## 🎲 Gameplay Tips
 
@@ -59,8 +58,8 @@ An exciting 3D browser-based game where you defend yourself against attacking mo
 ## 🚀 Running the Game
 
 Simply open the `index.html` file in any modern web browser that supports:
-- WebGL
-- ES6 Modules
-- Pointer Lock API
+- HTML5 Canvas
+- ES6 JavaScript
+- CSS3
 
-No build process or dependencies required!
+No build process, server, or dependencies required!

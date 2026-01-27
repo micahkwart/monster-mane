@@ -328,9 +328,19 @@
         const shopItems = [
             { id: 1, name: 'Health Potion', cost: 50, effect: () => { game.health = Math.min(game.maxHealth, game.health + 50); updateUI(); } },
             { id: 2, name: 'Max Health +20', cost: 100, effect: () => { game.maxHealth += 20; game.health += 20; updateUI(); } },
-            { id: 3, name: 'Damage Boost', cost: 150, effect: () => { powers.forEach(p => p.damage = Math.floor(p.damage * 1.2)); } },
-            { id: 4, name: 'Speed Boost', cost: 80, effect: () => { game.player.speed *= 1.2; } },
-            { id: 5, name: 'Cooldown Reduction', cost: 200, effect: () => { powers.forEach(p => p.cooldown = Math.floor(p.cooldown * 0.8)); } }
+            { id: 3, name: 'Damage Boost', cost: 150, effect: () => { 
+                powers.forEach(p => {
+                    if (p.damage > 0) {
+                        p.damage = Math.floor(p.damage * 1.1);
+                    }
+                });
+            }},
+            { id: 4, name: 'Speed Boost', cost: 80, effect: () => { game.player.speed = Math.min(0.3, game.player.speed * 1.15); } },
+            { id: 5, name: 'Cooldown Reduction', cost: 200, effect: () => { 
+                powers.forEach(p => {
+                    p.cooldown = Math.max(500, Math.floor(p.cooldown * 0.9));
+                });
+            }}
         ];
         
         // Enemies and projectiles
