@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monster Mane – Dragon Chronicles</title>
+    <style>
+/* ── RESET ── */
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+body   { background:#000; overflow:hidden; font-family:'Arial',sans-serif; color:#fff; }
+canvas { display:block; width:100vw; height:100vh; cursor:crosshair; }
+
+/* ── UI LAYER ── */
+#ui {
+    position:absolute; top:0; left:0;
+    width:100%; height:100%;
+    pointer-events:none;
+}
+#ui > * { pointer-events:auto; }
+
+/* ── MENU SCREEN ── */
+#menu-screen {
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    position:absolute; inset:0;
+    background:linear-gradient(180deg,#0a0a1a 0%,#1a0a2a 100%);
+}
+#menu-screen h1 {
+    font-size:52px; color:#ff8c00;
+    text-shadow:0 0 30px #ff4400, 0 0 60px #ff220066;
+    letter-spacing:4px; margin-bottom:10px;
+}
+#menu-screen h2 { font-size:22px; color:#aaa; margin-bottom:40px; letter-spacing:2px; }
+#menu-screen input[type="text"] {
+    padding:12px 20px; font-size:18px; border-radius:8px;
+    border:2px solid #ff8c00; background:#111; color:#fff;
+    width:300px; margin-bottom:20px; text-align:center;
+}
+#menu-screen input[type="text"]:focus { outline:none; border-color:#ffd700; }
+.menu-btn-row { display:flex; gap:16px; margin-bottom:20px; }
+.menu-btn {
+    padding:14px 32px; font-size:18px; border:none; border-radius:8px;
+    cursor:pointer; font-weight:bold; transition:all .2s;
+}
+#new-game-btn { background:#ff8c00; color:#000; }
+#new-game-btn:hover { background:#ffb300; transform:scale(1.05); }
+#load-game-btn { background:#1a4a1a; color:#88ff88; border:2px solid #44aa44; }
+#load-game-btn:not(:disabled):hover { background:#224422; transform:scale(1.05); }
+#load-game-btn:disabled { opacity:0.35; cursor:not-allowed; }
+#save-info { font-size:13px; color:#888; margin-top:8px; }
+.menu-tip { font-size:13px; color:#556; margin-top:24px; }
+
+/* ── HUD ── */
+#hud {
+    position:absolute; top:16px; left:16px;
+    background:rgba(0,0,0,0.72); border-radius:12px;
+    padding:14px 18px; min-width:220px;
+    border:1px solid rgba(255,140,0,0.3);
+    transition:border-color .3s;
+}
+.hud-name { font-size:14px; color:#ff8c00; font-weight:bold; margin-bottom:8px; }
+.hud-row  { font-size:13px; color:#ccc; margin-bottom:4px; display:flex; align-items:center; gap:6px; }
+.bar-wrap  {
+    width:180px; height:14px; border-radius:7px;
+    background:#222; border:1px solid #444; overflow:hidden; margin-bottom:6px;
+}
+#h-hp-fill  { height:100%; background:linear-gradient(90deg,#dd2222,#ff6655); transition:width .25s; }
+#h-xp-fill  { height:100%; background:linear-gradient(90deg,#2266ff,#44aaff); transition:width .25s; }
+
+/* ── POWER BAR ── */
+#powers-bar {
+    position:absolute; bottom:18px; left:50%; transform:translateX(-50%);
+    display:flex; gap:8px; pointer-events:auto;
+}
+.power-btn {
+    width:58px; height:64px;
+    background:rgba(10,10,30,0.88);
+    border:2px solid #444; border-radius:10px;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    cursor:pointer; position:relative; overflow:hidden;
+    transition:transform .15s;
+}
+.power-btn:not(.locked):hover { transform:scale(1.1); }
+.power-btn.locked { opacity:0.38; cursor:not-allowed; }
+.power-btn.on-cd  { opacity:0.6; }
+.pkey  { font-size:18px; font-weight:bold; color:#fff; }
+.pname { font-size:9px;  color:#ccc; text-align:center; }
+.pcd   { font-size:10px; color:#ff8c00; position:absolute; bottom:14px; }
+.pcd-bar {
+    position:absolute; bottom:0; left:0; width:100%;
+    background:rgba(255,140,0,0.35); transition:height .1s;
+}
+
+/* ── CONTROLS HINT ── */
+#controls-hint {
+    position:absolute; top:16px; right:16px;
+    background:rgba(0,0,0,0.7); border-radius:10px;
+    padding:12px 16px; font-size:13px; color:#bbb;
+    border:1px solid #333;
+}
+#controls-hint h3 { color:#ff8c00; margin-bottom:6px; font-size:14px; }
+#controls-hint p  { margin:3px 0; }
+
+/* ── COMBAT LEVEL NAME ── */
+#combat-level-name {
+    position:absolute; top:16px; left:50%; transform:translateX(-50%);
+    background:rgba(0,0,0,0.65); border:1px solid #ff8c00;
+    border-radius:8px; padding:8px 20px;
+    font-size:16px; color:#ffd700; font-weight:bold;
+    pointer-events:none;
+}
+
+/* ── MISSION SELECT ── */
+#mission-select {
+    position:absolute; inset:0;
+    background:rgba(0,0,0,0.92);
+    display:flex; flex-direction:column; align-items:center;
+    padding:40px 20px 20px;
+    overflow-y:auto;
+}
+#mission-select h2 { font-size:28px; color:#ffd700; margin-bottom:6px; }
+#mission-select .ms-sub { font-size:14px; color:#888; margin-bottom:20px; }
+#missions-list { width:100%; max-width:700px; display:flex; flex-direction:column; gap:12px; }
+.mission-item {
+    background:rgba(30,30,50,0.95); border-radius:10px;
+    border:1px solid #334; padding:14px 18px;
+    display:flex; align-items:center; gap:14px;
+}
+.mission-item.completed { border-color:#228B22; }
+.mission-item.locked    { opacity:0.45; }
+.mission-info  { flex:1; }
+.mission-name  { font-size:16px; font-weight:bold; color:#fff; display:block; margin-bottom:4px; }
+.mission-desc  { font-size:13px; color:#aaa; display:block; margin-bottom:3px; }
+.mission-power { font-size:12px; color:#88aaff; }
+.mission-status { min-width:70px; text-align:center; }
+.badge-done { color:#44dd44; font-weight:bold; font-size:13px; }
+.badge-lock { color:#888; font-size:13px; }
+.mission-start-btn {
+    padding:10px 20px; border:none; border-radius:8px;
+    background:#ff8c00; color:#000; font-weight:bold;
+    cursor:pointer; font-size:15px; transition:all .2s; white-space:nowrap;
+}
+.mission-start-btn:hover { background:#ffb300; transform:scale(1.05); }
+#close-missions-btn {
+    position:absolute; top:14px; right:20px;
+    background:#cc2222; color:#fff; border:none;
+    border-radius:6px; padding:8px 14px; cursor:pointer; font-size:16px; font-weight:bold;
+}
+
+/* ── LEVEL COMPLETE ── */
+#level-complete-screen {
+    position:absolute; inset:0;
+    background:rgba(0,0,0,0.93);
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+}
+#level-complete-screen h2 {
+    font-size:42px; color:#44dd44;
+    text-shadow:0 0 20px #44dd44; margin-bottom:24px;
+}
+#lc-level-name  { font-size:22px; color:#ffd700; margin-bottom:20px; }
+.lc-row { font-size:18px; color:#ccc; margin:8px 0; }
+#lc-power { font-size:16px; margin:12px 0 24px; }
+#lc-charlevel { font-size:16px; color:#88aaff; margin-bottom:24px; }
+#lc-continue-btn {
+    padding:14px 36px; font-size:18px; border:none; border-radius:10px;
+    background:#ff8c00; color:#000; font-weight:bold;
+    cursor:pointer; transition:all .2s;
+}
+#lc-continue-btn:hover { background:#ffb300; transform:scale(1.05); }
+
+/* ── GAME OVER ── */
+#game-over-screen {
+    position:absolute; inset:0;
+    background:rgba(0,0,0,0.93);
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+}
+#game-over-screen h2 {
+    font-size:48px; color:#ff2222;
+    text-shadow:0 0 30px #ff0000; margin-bottom:16px;
+}
+#game-over-screen p { font-size:18px; color:#aaa; margin:8px 0; }
+#respawn-btn {
+    margin-top:24px; padding:14px 36px; font-size:18px;
+    border:none; border-radius:10px;
+    background:#44aa44; color:#fff; font-weight:bold;
+    cursor:pointer; transition:all .2s;
+}
+#respawn-btn:hover { background:#55cc55; transform:scale(1.05); }
+
+/* ── SHOP ── */
+#shop {
+    position:absolute; inset:0;
+    background:rgba(0,0,0,0.93);
+    display:flex; flex-direction:column; align-items:center;
+    padding:40px 20px 20px; overflow-y:auto;
+}
+#shop h2  { font-size:28px; color:#ffd700; margin-bottom:4px; }
+#shop .shop-sub { font-size:14px; color:#aaa; margin-bottom:6px; }
+#shop .shop-wallet { font-size:16px; color:#ffd700; margin-bottom:20px; }
+#shop-items { width:100%; max-width:600px; display:flex; flex-direction:column; gap:10px; }
+.shop-item {
+    background:rgba(30,30,50,0.9); border-radius:10px;
+    border:1px solid #334; padding:14px 18px;
+    display:flex; justify-content:space-between; align-items:center;
+}
+.shop-item strong { color:#fff; }
+.item-desc { color:#aaa; font-size:13px; }
+.shop-cost { color:#ffd700; font-size:14px; margin-right:12px; }
+.shop-buy-btn {
+    padding:9px 18px; font-size:14px; border:none; border-radius:6px;
+    background:#ffd700; color:#000; font-weight:bold; cursor:pointer; transition:all .2s;
+}
+.shop-buy-btn:hover:not(:disabled) { background:#ffe44d; transform:scale(1.05); }
+.shop-buy-btn:disabled { background:#444; color:#888; cursor:not-allowed; }
+#close-shop-btn {
+    position:absolute; top:14px; right:20px;
+    background:#cc2222; color:#fff; border:none;
+    border-radius:6px; padding:8px 14px; cursor:pointer; font-size:16px; font-weight:bold;
+}
+
+/* ── DIALOGUE ── */
+#dialogue {
+    position:absolute; bottom:0; left:0; right:0;
+    background:rgba(0,0,0,0.88);
+    border-top:2px solid #ff8c00;
+    padding:20px 30px 16px;
+    display:flex; flex-direction:column; gap:8px;
+}
+#dialogue-name { font-size:18px; font-weight:bold; color:#ff8c00; }
+#dialogue-text { font-size:15px; color:#ddd; line-height:1.5; }
+#dialogue-close-btn {
+    align-self:flex-end; padding:8px 18px; font-size:13px;
+    border:1px solid #ff8c00; background:transparent; color:#ff8c00;
+    border-radius:6px; cursor:pointer; transition:all .2s;
+}
+#dialogue-close-btn:hover { background:#ff8c00; color:#000; }
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar { width:6px; }
+::-webkit-scrollbar-track { background:#111; }
+::-webkit-scrollbar-thumb { background:#444; border-radius:3px; }
+    </style>
+</head>
+<body>
+<canvas id="gameCanvas"></canvas>
+
+<div id="ui">
+
+    <!-- MENU SCREEN -->
+    <div id="menu-screen">
+        <h1>🐉 MONSTER MANE</h1>
+        <h2>Dragon Chronicles · Time Patrol</h2>
+        <input type="text" id="player-name-input" placeholder="Enter your name…" maxlength="20">
+        <div class="menu-btn-row">
+            <button class="menu-btn" id="new-game-btn">⚡ New Game</button>
+            <button class="menu-btn" id="load-game-btn" disabled>▶ Continue</button>
+        </div>
+        <div id="save-info"></div>
+        <p class="menu-tip">WASD · Arrows · 1-0 Powers · E Interact · B Shop</p>
+    </div>
+
+    <!-- HUD (hub + combat) -->
+    <div id="hud" style="display:none">
+        <div class="hud-name" id="h-name">Time Patroller</div>
+        <div class="hud-row">⚡ Lv.<span id="h-level">1</span></div>
+        <div class="bar-wrap"><div id="h-xp-fill" style="width:0%"></div></div>
+        <div class="hud-row" style="font-size:11px">
+            XP: <span id="h-xp">0</span>/<span id="h-xpnext">150</span>
+        </div>
+        <div class="hud-row">❤️ <span id="h-hp">100</span>/<span id="h-maxhp">100</span></div>
+        <div class="bar-wrap"><div id="h-hp-fill" style="width:100%"></div></div>
+        <div class="hud-row">💰 <span id="h-coins">0</span></div>
+    </div>
+
+    <!-- Controls hint -->
+    <div id="controls-hint" style="display:none">
+        <h3>Controls</h3>
+        <p>WASD – Move</p>
+        <p>← → – Look</p>
+        <p>1-0 – Powers</p>
+        <p>E – Interact</p>
+        <p>B – Shop</p>
+    </div>
+
+    <!-- Combat level name banner -->
+    <div id="combat-level-name" style="display:none"></div>
+
+    <!-- Powers bar -->
+    <div id="powers-bar" style="display:none"></div>
+
+    <!-- MISSION SELECT -->
+    <div id="mission-select" style="display:none">
+        <button id="close-missions-btn">✕ Close</button>
+        <h2>📋 Parallel Quests</h2>
+        <p class="ms-sub">Complete quests to unlock new powers. Quests must be cleared in order.</p>
+        <div id="missions-list"></div>
+    </div>
+
+    <!-- LEVEL COMPLETE -->
+    <div id="level-complete-screen" style="display:none">
+        <h2>✅ Mission Complete!</h2>
+        <div id="lc-level-name"></div>
+        <div class="lc-row">⚡ XP Earned: <strong id="lc-xp">0</strong></div>
+        <div class="lc-row">💰 Coins Earned: <strong id="lc-coins">0</strong></div>
+        <div id="lc-power"></div>
+        <div id="lc-charlevel"></div>
+        <button id="lc-continue-btn">Return to Conton City 🏙️</button>
+    </div>
+
+    <!-- GAME OVER -->
+    <div id="game-over-screen" style="display:none">
+        <h2>💀 Time Patrol Failed</h2>
+        <p>The timeline has been distorted…</p>
+        <p>Enemies Defeated: <strong id="go-score">0</strong></p>
+        <button id="respawn-btn">🏥 Respawn in Conton City</button>
+    </div>
+
+    <!-- SHOP -->
+    <div id="shop" style="display:none">
+        <button id="close-shop-btn">✕ Close</button>
+        <h2>🛒 Z-Store</h2>
+        <p class="shop-sub">Capsule Corp Technology — Upgrade your Time Patroller</p>
+        <p class="shop-wallet">💰 Coins: <strong id="shop-coins">0</strong></p>
+        <div id="shop-items"></div>
+    </div>
+
+    <!-- DIALOGUE -->
+    <div id="dialogue" style="display:none">
+        <div id="dialogue-name"></div>
+        <div id="dialogue-text"></div>
+        <button id="dialogue-close-btn">[E] Close</button>
+    </div>
+
+</div>
+
+<script src="game.js"></script>
+</body>
+</html>
