@@ -957,7 +957,7 @@ function hidePowerBar(hidden) {
 
 function updateHUDStats() {
     if (!save) return;
-    const maxHp = save ? save.maxHealth : 100;
+    const maxHp = save.maxHealth;
     const pct   = Math.max(0, game.health / maxHp * 100).toFixed(1);
     document.getElementById('h-hp').textContent      = Math.max(0, Math.floor(game.health));
     document.getElementById('h-maxhp').textContent   = maxHp;
