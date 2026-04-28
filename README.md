@@ -1,65 +1,99 @@
-# Monster Mane - 3D Action Game
+# Monster Mane – Dragon Chronicles
 
-An exciting 3D browser-based game where you defend yourself against attacking monsters using 10 unique powers!
+A Dragon Ball Xenoverse 2-style 3D action RPG playable in any modern browser. No installation required.
 
 ## 🎮 How to Play
 
-1. Open `index.html` in a modern web browser
-2. Click on the game canvas to lock your pointer and start playing
-3. Survive as long as possible against waves of enemies!
+1. Open `index.html` in a modern web browser (Chrome/Firefox/Edge)
+2. Enter your name and click **New Game** (or **Continue** if you have a save)
+3. Explore **Conton City** hub world, talk to NPCs, and walk into the **Time Portal** to start missions
+4. Complete Parallel Quests to unlock Dragon Ball powers and progress your character
 
-## 🎯 Game Features
+## 🏙️ Conton City Hub
 
-- **3D Graphics**: Pseudo-3D environment with custom projection rendering
-- **Player Character**: Control a character in first-person view
-- **Enemy Waves**: Monsters continuously spawn and attack you
-- **10 Unique Powers**: Each with different abilities and cooldowns
-- **Shop System**: Spend coins earned from defeating enemies to buy upgrades
-- **Health System**: Manage your health to survive longer
-- **Score Tracking**: Track your performance and enemies defeated
+Walk around the hub world to interact with famous Dragon Ball characters:
+
+| NPC | Location | Role |
+|-----|----------|------|
+| Chronoa | Near portal | Welcome & tips |
+| Elder Kai | Near portal | Training advice |
+| Bulma | Z-Store | **Opens shop** 🛒 |
+| Future Trunks | Central plaza | Combat tips |
+| Piccolo, Krillin, Gohan, Yamcha | Around city | Lore/dialogue |
+
+Walk into the glowing **⚡ Time Portal** (center south) to choose a mission.
 
 ## 🕹️ Controls
 
-- **WASD** - Move around the map
-- **Arrow Keys** - Look around (rotate camera)
-- **1-9, 0** - Activate powers (each number key corresponds to a different power)
-- **B** - Open/Close shop
+| Key | Action |
+|-----|--------|
+| **WASD** | Move |
+| **← →** | Rotate camera |
+| **E** | Interact (NPCs / portal) |
+| **1–0** | Use powers |
+| **B** | Open Z-Store shop |
 
-## ⚡ Powers
+## ⚡ 10 Dragon Ball Powers (unlocked by completing levels)
 
-1. **Fireball (1)** - Launch a burning projectile (1s cooldown)
-2. **Ice Blast (2)** - Freeze enemies with ice (1.5s cooldown)
-3. **Lightning (3)** - Devastating lightning strike (2s cooldown)
-4. **Heal (4)** - Restore your health (5s cooldown)
-5. **Shield (5)** - Temporary invulnerability (10s cooldown)
-6. **Bomb (6)** - Area explosion affecting nearby enemies (3s cooldown)
-7. **Poison (7)** - Toxic damage over time (2.5s cooldown)
-8. **Wind (8)** - Push enemies away (1.8s cooldown)
-9. **Earth (9)** - Launch rock projectiles (3.5s cooldown)
-10. **Ultimate (0)** - Maximum damage attack (15s cooldown)
+| Key | Power | Unlocked After | Cooldown |
+|-----|-------|----------------|----------|
+| 1 | Ki Blast | PQ 01 | 0.8 s |
+| 2 | Kamehameha | PQ 02 | 2 s |
+| 3 | Galick Gun | PQ 03 | 2.5 s |
+| 4 | Spirit Bomb (AoE) | PQ 04 | 8 s |
+| 5 | Senzu Bean (heal) | PQ 05 | 6 s |
+| 6 | Ki Shield (5 s invincible) | PQ 06 | 12 s |
+| 7 | Explosive Wave (AoE) | PQ 07 | 4 s |
+| 8 | Solar Flare (stun) | PQ 08 | 5 s |
+| 9 | Super Saiyan (2× dmg) | PQ 09 | 15 s |
+| 0 | Final Flash | PQ 10 | 10 s |
 
-## 🛒 Shop Items
+## 📋 10 Parallel Quest Levels
 
-- **Health Potion** (50 coins) - Restore 50 health
-- **Max Health +20** (100 coins) - Permanently increase max health
-- **Damage Boost** (150 coins) - Increase all power damage by 10%
-- **Speed Boost** (80 coins) - Increase movement speed by 15% (max 300%)
-- **Cooldown Reduction** (200 coins) - Reduce all power cooldowns by 10% (min 500ms)
+| # | Name | Enemies | Reward |
+|---|------|---------|--------|
+| 1 | Saiyan Warriors | 5 | Ki Blast |
+| 2 | The Android Files | 7 | Kamehameha |
+| 3 | Namek Showdown | 8 | Galick Gun |
+| 4 | Cell Games | 10 | Spirit Bomb |
+| 5 | Buu Saga | 10 | Senzu Bean |
+| 6 | Tournament of Power | 12 | Ki Shield |
+| 7 | Frieza's Revenge | 12 | Explosive Wave |
+| 8 | Golden Age | 15 | Solar Flare |
+| 9 | Ultra Instinct Test | 15 | Super Saiyan |
+| 10 | Supreme Battle | 20 | Final Flash |
 
-## 🎲 Gameplay Tips
+## 🛒 Z-Store Upgrades (talk to Bulma or press B)
 
-- Keep moving to avoid enemy attacks
-- Use the heal power strategically when health is low
-- Save coins for important upgrades in the shop
-- Different powers have different cooldowns - use them wisely
-- The shield power makes you invulnerable temporarily
-- Enemies spawn continuously - pace yourself!
+| Item | Cost | Effect |
+|------|------|--------|
+| Senzu Bean | 50 💰 | Restore full health |
+| Battle Suit | 100 💰 | +20 max HP (permanent) |
+| Super Training | 150 💰 | +10% damage (permanent) |
+| Gravity Chamber | 120 💰 | +15% speed (permanent) |
+| Time Crystals | 200 💰 | −10% cooldowns (permanent) |
+
+## 💾 Database / Save System
+
+Progress is automatically saved to **IndexedDB** (with localStorage fallback) including:
+- Character name & level (1–50)
+- XP, coins, max health
+- Completed quests
+- Unlocked powers
+- Purchased stat upgrades
+
+## 📈 Character Progression
+
+- Defeat enemies → earn **XP** and **coins**
+- XP fills your character level bar (each level = `level × 150 XP`)
+- Level up: **+10 max HP**, **+5% damage multiplier** (automatic)
+- Max character level: **50**
 
 ## 🚀 Running the Game
 
-Simply open the `index.html` file in any modern web browser that supports:
-- HTML5 Canvas
-- ES6 JavaScript
-- CSS3
+Open `index.html` in any modern browser. No server, no build step, no dependencies.
 
-No build process, server, or dependencies required!
+| File | Purpose |
+|------|---------|
+| `index.html` | Game HTML + CSS layout |
+| `game.js` | All game logic (canvas rendering, AI, DB, state machine) |

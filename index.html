@@ -3,748 +3,335 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Monster Mane - 3D Game</title>
+    <title>Monster Mane – Dragon Chronicles</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            font-family: 'Arial', sans-serif;
-            overflow: hidden;
-            background: #000;
-        }
-        
-        #gameCanvas {
-            display: block;
-            width: 100vw;
-            height: 100vh;
-            cursor: crosshair;
-        }
-        
-        #ui {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-        }
-        
-        #stats {
-            position: absolute;
-            top: 20px;
-            left: 20px;
-            background: rgba(0, 0, 0, 0.7);
-            color: white;
-            padding: 15px;
-            border-radius: 10px;
-            font-size: 16px;
-        }
-        
-        #health-bar {
-            width: 200px;
-            height: 20px;
-            background: #333;
-            border: 2px solid #fff;
-            border-radius: 10px;
-            overflow: hidden;
-            margin-top: 5px;
-        }
-        
-        #health-fill {
-            height: 100%;
-            background: linear-gradient(90deg, #ff0000, #ff6b6b);
-            transition: width 0.3s;
-        }
-        
-        #powers {
-            position: absolute;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            display: flex;
-            gap: 10px;
-            pointer-events: auto;
-        }
-        
-        .power {
-            width: 60px;
-            height: 60px;
-            background: rgba(0, 100, 255, 0.8);
-            border: 3px solid #fff;
-            border-radius: 10px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            color: white;
-            font-size: 12px;
-            transition: all 0.2s;
-        }
-        
-        .power:hover {
-            transform: scale(1.1);
-            background: rgba(0, 150, 255, 0.9);
-        }
-        
-        .power.cooldown {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-        
-        .power-key {
-            font-size: 18px;
-            font-weight: bold;
-        }
-        
-        #shop {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: rgba(0, 0, 0, 0.95);
-            padding: 30px;
-            border-radius: 15px;
-            border: 3px solid #ffd700;
-            display: none;
-            pointer-events: auto;
-            max-width: 600px;
-            max-height: 80vh;
-            overflow-y: auto;
-        }
-        
-        #shop.active {
-            display: block;
-        }
-        
-        #shop h2 {
-            color: #ffd700;
-            margin-bottom: 20px;
-            text-align: center;
-        }
-        
-        .shop-item {
-            background: rgba(50, 50, 50, 0.8);
-            padding: 15px;
-            margin: 10px 0;
-            border-radius: 10px;
-            color: white;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .shop-item button {
-            padding: 10px 20px;
-            background: #ffd700;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-weight: bold;
-            transition: all 0.2s;
-        }
-        
-        .shop-item button:hover {
-            background: #ffed4e;
-            transform: scale(1.05);
-        }
-        
-        .shop-item button:disabled {
-            background: #666;
-            cursor: not-allowed;
-            transform: none;
-        }
-        
-        #close-shop {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background: #ff4444;
-            color: white;
-            border: none;
-            padding: 10px 15px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-weight: bold;
-        }
-        
-        #game-over {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: rgba(0, 0, 0, 0.95);
-            padding: 40px;
-            border-radius: 15px;
-            border: 3px solid #ff0000;
-            display: none;
-            pointer-events: auto;
-            text-align: center;
-        }
-        
-        #game-over.active {
-            display: block;
-        }
-        
-        #game-over h2 {
-            color: #ff0000;
-            font-size: 48px;
-            margin-bottom: 20px;
-        }
-        
-        #game-over p {
-            color: white;
-            font-size: 24px;
-            margin: 10px 0;
-        }
-        
-        #restart-btn {
-            margin-top: 20px;
-            padding: 15px 30px;
-            background: #4CAF50;
-            color: white;
-            border: none;
-            border-radius: 10px;
-            font-size: 20px;
-            cursor: pointer;
-            font-weight: bold;
-        }
-        
-        #restart-btn:hover {
-            background: #45a049;
-        }
-        
-        #controls {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            background: rgba(0, 0, 0, 0.7);
-            color: white;
-            padding: 15px;
-            border-radius: 10px;
-            font-size: 14px;
-        }
-        
-        #controls h3 {
-            margin-bottom: 10px;
-            color: #ffd700;
-        }
-        
-        #controls p {
-            margin: 5px 0;
-        }
+/* ── RESET ── */
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+body   { background:#000; overflow:hidden; font-family:'Arial',sans-serif; color:#fff; }
+canvas { display:block; width:100vw; height:100vh; cursor:crosshair; }
+
+/* ── UI LAYER ── */
+#ui {
+    position:absolute; top:0; left:0;
+    width:100%; height:100%;
+    pointer-events:none;
+}
+#ui > * { pointer-events:auto; }
+
+/* ── MENU SCREEN ── */
+#menu-screen {
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    position:absolute; inset:0;
+    background:linear-gradient(180deg,#0a0a1a 0%,#1a0a2a 100%);
+}
+#menu-screen h1 {
+    font-size:52px; color:#ff8c00;
+    text-shadow:0 0 30px #ff4400, 0 0 60px #ff220066;
+    letter-spacing:4px; margin-bottom:10px;
+}
+#menu-screen h2 { font-size:22px; color:#aaa; margin-bottom:40px; letter-spacing:2px; }
+#menu-screen input[type="text"] {
+    padding:12px 20px; font-size:18px; border-radius:8px;
+    border:2px solid #ff8c00; background:#111; color:#fff;
+    width:300px; margin-bottom:20px; text-align:center;
+}
+#menu-screen input[type="text"]:focus { outline:none; border-color:#ffd700; }
+.menu-btn-row { display:flex; gap:16px; margin-bottom:20px; }
+.menu-btn {
+    padding:14px 32px; font-size:18px; border:none; border-radius:8px;
+    cursor:pointer; font-weight:bold; transition:all .2s;
+}
+#new-game-btn { background:#ff8c00; color:#000; }
+#new-game-btn:hover { background:#ffb300; transform:scale(1.05); }
+#load-game-btn { background:#1a4a1a; color:#88ff88; border:2px solid #44aa44; }
+#load-game-btn:not(:disabled):hover { background:#224422; transform:scale(1.05); }
+#load-game-btn:disabled { opacity:0.35; cursor:not-allowed; }
+#save-info { font-size:13px; color:#888; margin-top:8px; }
+.menu-tip { font-size:13px; color:#556; margin-top:24px; }
+
+/* ── HUD ── */
+#hud {
+    position:absolute; top:16px; left:16px;
+    background:rgba(0,0,0,0.72); border-radius:12px;
+    padding:14px 18px; min-width:220px;
+    border:1px solid rgba(255,140,0,0.3);
+    transition:border-color .3s;
+}
+.hud-name { font-size:14px; color:#ff8c00; font-weight:bold; margin-bottom:8px; }
+.hud-row  { font-size:13px; color:#ccc; margin-bottom:4px; display:flex; align-items:center; gap:6px; }
+.bar-wrap  {
+    width:180px; height:14px; border-radius:7px;
+    background:#222; border:1px solid #444; overflow:hidden; margin-bottom:6px;
+}
+#h-hp-fill  { height:100%; background:linear-gradient(90deg,#dd2222,#ff6655); transition:width .25s; }
+#h-xp-fill  { height:100%; background:linear-gradient(90deg,#2266ff,#44aaff); transition:width .25s; }
+
+/* ── POWER BAR ── */
+#powers-bar {
+    position:absolute; bottom:18px; left:50%; transform:translateX(-50%);
+    display:flex; gap:8px; pointer-events:auto;
+}
+.power-btn {
+    width:58px; height:64px;
+    background:rgba(10,10,30,0.88);
+    border:2px solid #444; border-radius:10px;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    cursor:pointer; position:relative; overflow:hidden;
+    transition:transform .15s;
+}
+.power-btn:not(.locked):hover { transform:scale(1.1); }
+.power-btn.locked { opacity:0.38; cursor:not-allowed; }
+.power-btn.on-cd  { opacity:0.6; }
+.pkey  { font-size:18px; font-weight:bold; color:#fff; }
+.pname { font-size:9px;  color:#ccc; text-align:center; }
+.pcd   { font-size:10px; color:#ff8c00; position:absolute; bottom:14px; }
+.pcd-bar {
+    position:absolute; bottom:0; left:0; width:100%;
+    background:rgba(255,140,0,0.35); transition:height .1s;
+}
+
+/* ── CONTROLS HINT ── */
+#controls-hint {
+    position:absolute; top:16px; right:16px;
+    background:rgba(0,0,0,0.7); border-radius:10px;
+    padding:12px 16px; font-size:13px; color:#bbb;
+    border:1px solid #333;
+}
+#controls-hint h3 { color:#ff8c00; margin-bottom:6px; font-size:14px; }
+#controls-hint p  { margin:3px 0; }
+
+/* ── COMBAT LEVEL NAME ── */
+#combat-level-name {
+    position:absolute; top:16px; left:50%; transform:translateX(-50%);
+    background:rgba(0,0,0,0.65); border:1px solid #ff8c00;
+    border-radius:8px; padding:8px 20px;
+    font-size:16px; color:#ffd700; font-weight:bold;
+    pointer-events:none;
+}
+
+/* ── MISSION SELECT ── */
+#mission-select {
+    position:absolute; inset:0;
+    background:rgba(0,0,0,0.92);
+    display:flex; flex-direction:column; align-items:center;
+    padding:40px 20px 20px;
+    overflow-y:auto;
+}
+#mission-select h2 { font-size:28px; color:#ffd700; margin-bottom:6px; }
+#mission-select .ms-sub { font-size:14px; color:#888; margin-bottom:20px; }
+#missions-list { width:100%; max-width:700px; display:flex; flex-direction:column; gap:12px; }
+.mission-item {
+    background:rgba(30,30,50,0.95); border-radius:10px;
+    border:1px solid #334; padding:14px 18px;
+    display:flex; align-items:center; gap:14px;
+}
+.mission-item.completed { border-color:#228B22; }
+.mission-item.locked    { opacity:0.45; }
+.mission-info  { flex:1; }
+.mission-name  { font-size:16px; font-weight:bold; color:#fff; display:block; margin-bottom:4px; }
+.mission-desc  { font-size:13px; color:#aaa; display:block; margin-bottom:3px; }
+.mission-power { font-size:12px; color:#88aaff; }
+.mission-status { min-width:70px; text-align:center; }
+.badge-done { color:#44dd44; font-weight:bold; font-size:13px; }
+.badge-lock { color:#888; font-size:13px; }
+.mission-start-btn {
+    padding:10px 20px; border:none; border-radius:8px;
+    background:#ff8c00; color:#000; font-weight:bold;
+    cursor:pointer; font-size:15px; transition:all .2s; white-space:nowrap;
+}
+.mission-start-btn:hover { background:#ffb300; transform:scale(1.05); }
+#close-missions-btn {
+    position:absolute; top:14px; right:20px;
+    background:#cc2222; color:#fff; border:none;
+    border-radius:6px; padding:8px 14px; cursor:pointer; font-size:16px; font-weight:bold;
+}
+
+/* ── LEVEL COMPLETE ── */
+#level-complete-screen {
+    position:absolute; inset:0;
+    background:rgba(0,0,0,0.93);
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+}
+#level-complete-screen h2 {
+    font-size:42px; color:#44dd44;
+    text-shadow:0 0 20px #44dd44; margin-bottom:24px;
+}
+#lc-level-name  { font-size:22px; color:#ffd700; margin-bottom:20px; }
+.lc-row { font-size:18px; color:#ccc; margin:8px 0; }
+#lc-power { font-size:16px; margin:12px 0 24px; }
+#lc-charlevel { font-size:16px; color:#88aaff; margin-bottom:24px; }
+#lc-continue-btn {
+    padding:14px 36px; font-size:18px; border:none; border-radius:10px;
+    background:#ff8c00; color:#000; font-weight:bold;
+    cursor:pointer; transition:all .2s;
+}
+#lc-continue-btn:hover { background:#ffb300; transform:scale(1.05); }
+
+/* ── GAME OVER ── */
+#game-over-screen {
+    position:absolute; inset:0;
+    background:rgba(0,0,0,0.93);
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+}
+#game-over-screen h2 {
+    font-size:48px; color:#ff2222;
+    text-shadow:0 0 30px #ff0000; margin-bottom:16px;
+}
+#game-over-screen p { font-size:18px; color:#aaa; margin:8px 0; }
+#respawn-btn {
+    margin-top:24px; padding:14px 36px; font-size:18px;
+    border:none; border-radius:10px;
+    background:#44aa44; color:#fff; font-weight:bold;
+    cursor:pointer; transition:all .2s;
+}
+#respawn-btn:hover { background:#55cc55; transform:scale(1.05); }
+
+/* ── SHOP ── */
+#shop {
+    position:absolute; inset:0;
+    background:rgba(0,0,0,0.93);
+    display:flex; flex-direction:column; align-items:center;
+    padding:40px 20px 20px; overflow-y:auto;
+}
+#shop h2  { font-size:28px; color:#ffd700; margin-bottom:4px; }
+#shop .shop-sub { font-size:14px; color:#aaa; margin-bottom:6px; }
+#shop .shop-wallet { font-size:16px; color:#ffd700; margin-bottom:20px; }
+#shop-items { width:100%; max-width:600px; display:flex; flex-direction:column; gap:10px; }
+.shop-item {
+    background:rgba(30,30,50,0.9); border-radius:10px;
+    border:1px solid #334; padding:14px 18px;
+    display:flex; justify-content:space-between; align-items:center;
+}
+.shop-item strong { color:#fff; }
+.item-desc { color:#aaa; font-size:13px; }
+.shop-cost { color:#ffd700; font-size:14px; margin-right:12px; }
+.shop-buy-btn {
+    padding:9px 18px; font-size:14px; border:none; border-radius:6px;
+    background:#ffd700; color:#000; font-weight:bold; cursor:pointer; transition:all .2s;
+}
+.shop-buy-btn:hover:not(:disabled) { background:#ffe44d; transform:scale(1.05); }
+.shop-buy-btn:disabled { background:#444; color:#888; cursor:not-allowed; }
+#close-shop-btn {
+    position:absolute; top:14px; right:20px;
+    background:#cc2222; color:#fff; border:none;
+    border-radius:6px; padding:8px 14px; cursor:pointer; font-size:16px; font-weight:bold;
+}
+
+/* ── DIALOGUE ── */
+#dialogue {
+    position:absolute; bottom:0; left:0; right:0;
+    background:rgba(0,0,0,0.88);
+    border-top:2px solid #ff8c00;
+    padding:20px 30px 16px;
+    display:flex; flex-direction:column; gap:8px;
+}
+#dialogue-name { font-size:18px; font-weight:bold; color:#ff8c00; }
+#dialogue-text { font-size:15px; color:#ddd; line-height:1.5; }
+#dialogue-close-btn {
+    align-self:flex-end; padding:8px 18px; font-size:13px;
+    border:1px solid #ff8c00; background:transparent; color:#ff8c00;
+    border-radius:6px; cursor:pointer; transition:all .2s;
+}
+#dialogue-close-btn:hover { background:#ff8c00; color:#000; }
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar { width:6px; }
+::-webkit-scrollbar-track { background:#111; }
+::-webkit-scrollbar-thumb { background:#444; border-radius:3px; }
     </style>
 </head>
 <body>
-    <canvas id="gameCanvas"></canvas>
-    <div id="ui">
-        <div id="stats">
-            <div>Health: <span id="health-text">100</span>/100</div>
-            <div id="health-bar">
-                <div id="health-fill" style="width: 100%"></div>
-            </div>
-            <div>Score: <span id="score">0</span></div>
-            <div>Coins: <span id="coins">0</span></div>
+<canvas id="gameCanvas"></canvas>
+
+<div id="ui">
+
+    <!-- MENU SCREEN -->
+    <div id="menu-screen">
+        <h1>🐉 MONSTER MANE</h1>
+        <h2>Dragon Chronicles · Time Patrol</h2>
+        <input type="text" id="player-name-input" placeholder="Enter your name…" maxlength="20">
+        <div class="menu-btn-row">
+            <button class="menu-btn" id="new-game-btn">⚡ New Game</button>
+            <button class="menu-btn" id="load-game-btn" disabled>▶ Continue</button>
         </div>
-        
-        <div id="controls">
-            <h3>Controls</h3>
-            <p>WASD - Move</p>
-            <p>Arrow Keys - Look</p>
-            <p>1-0 - Use Powers</p>
-            <p>B - Open Shop</p>
-        </div>
-        
-        <div id="powers"></div>
-        
-        <div id="shop">
-            <button id="close-shop">X</button>
-            <h2>🛒 Shop</h2>
-            <div id="shop-items"></div>
-        </div>
-        
-        <div id="game-over">
-            <h2>GAME OVER</h2>
-            <p>Final Score: <span id="final-score">0</span></p>
-            <p>Enemies Defeated: <span id="enemies-defeated">0</span></p>
-            <button id="restart-btn">Restart Game</button>
-        </div>
+        <div id="save-info"></div>
+        <p class="menu-tip">WASD · Arrows · 1-0 Powers · E Interact · B Shop</p>
     </div>
-    
-    <script>
-        // Canvas setup
-        const canvas = document.getElementById('gameCanvas');
-        const ctx = canvas.getContext('2d');
-        
-        function resizeCanvas() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-        }
-        resizeCanvas();
-        window.addEventListener('resize', resizeCanvas);
-        
-        // Game state
-        const game = {
-            health: 100,
-            maxHealth: 100,
-            score: 0,
-            coins: 0,
-            enemiesDefeated: 0,
-            isGameOver: false,
-            isPaused: false,
-            player: {
-                x: 0,
-                y: 0,
-                z: 0,
-                angle: 0,
-                verticalAngle: 0,
-                speed: 0.1
-            }
-        };
-        
-        // Powers configuration
-        const powers = [
-            { id: 1, name: 'Fireball', key: '1', cooldown: 1000, damage: 20, color: '#ff4400', description: 'Launch a fireball' },
-            { id: 2, name: 'Ice Blast', key: '2', cooldown: 1500, damage: 15, color: '#00ddff', description: 'Freeze enemies' },
-            { id: 3, name: 'Lightning', key: '3', cooldown: 2000, damage: 30, color: '#ffff00', description: 'Strike with lightning' },
-            { id: 4, name: 'Heal', key: '4', cooldown: 5000, damage: -30, color: '#00ff00', description: 'Restore health' },
-            { id: 5, name: 'Shield', key: '5', cooldown: 10000, damage: 0, color: '#8800ff', description: 'Temporary shield' },
-            { id: 6, name: 'Bomb', key: '6', cooldown: 3000, damage: 40, color: '#ff0000', description: 'Area explosion' },
-            { id: 7, name: 'Poison', key: '7', cooldown: 2500, damage: 25, color: '#00ff88', description: 'Poison damage' },
-            { id: 8, name: 'Wind', key: '8', cooldown: 1800, damage: 18, color: '#aaddff', description: 'Push enemies back' },
-            { id: 9, name: 'Earth', key: '9', cooldown: 3500, damage: 35, color: '#885522', description: 'Rock projectile' },
-            { id: 0, name: 'Ultimate', key: '0', cooldown: 15000, damage: 100, color: '#ff00ff', description: 'Devastating attack' }
-        ];
-        
-        const powerCooldowns = new Map();
-        let shieldActive = false;
-        let shieldEndTime = 0;
-        
-        // Shop items
-        const shopItems = [
-            { id: 1, name: 'Health Potion', cost: 50, effect: () => { game.health = Math.min(game.maxHealth, game.health + 50); updateUI(); } },
-            { id: 2, name: 'Max Health +20', cost: 100, effect: () => { game.maxHealth += 20; game.health += 20; updateUI(); } },
-            { id: 3, name: 'Damage Boost', cost: 150, effect: () => { 
-                powers.forEach(p => {
-                    if (p.damage > 0) {
-                        p.damage = Math.floor(p.damage * 1.1);
-                    }
-                });
-            }},
-            { id: 4, name: 'Speed Boost', cost: 80, effect: () => { game.player.speed = Math.min(0.3, game.player.speed * 1.15); } },
-            { id: 5, name: 'Cooldown Reduction', cost: 200, effect: () => { 
-                powers.forEach(p => {
-                    p.cooldown = Math.max(500, Math.floor(p.cooldown * 0.9));
-                });
-            }}
-        ];
-        
-        // Enemies and projectiles
-        const enemies = [];
-        const projectiles = [];
-        let lastEnemySpawn = 0;
-        
-        // Input handling
-        const keys = {};
-        
-        document.addEventListener('keydown', (e) => {
-            if (game.isGameOver) return;
-            keys[e.key.toLowerCase()] = true;
-            
-            if (e.key.toLowerCase() === 'b') {
-                toggleShop();
-            }
-            
-            if (!game.isPaused) {
-                const num = e.key;
-                if ('1234567890'.includes(num)) {
-                    const powerIndex = num === '0' ? 9 : parseInt(num) - 1;
-                    usePower(powers[powerIndex]);
-                }
-            }
-        });
-        
-        document.addEventListener('keyup', (e) => {
-            keys[e.key.toLowerCase()] = false;
-        });
-        
-        // Enemy creation
-        function createEnemy() {
-            const angle = Math.random() * Math.PI * 2;
-            const distance = 20 + Math.random() * 10;
-            enemies.push({
-                x: game.player.x + Math.cos(angle) * distance,
-                y: 0,
-                z: game.player.z + Math.sin(angle) * distance,
-                health: 50,
-                speed: 0.03
-            });
-        }
-        
-        // Power usage
-        function usePower(power) {
-            const now = Date.now();
-            const lastUsed = powerCooldowns.get(power.id) || 0;
-            
-            if (now - lastUsed < power.cooldown) {
-                return;
-            }
-            
-            powerCooldowns.set(power.id, now);
-            
-            if (power.name === 'Heal') {
-                game.health = Math.min(game.maxHealth, game.health - power.damage);
-                updateUI();
-            } else if (power.name === 'Shield') {
-                shieldActive = true;
-                shieldEndTime = now + 5000;
-            } else if (power.name === 'Bomb') {
-                enemies.forEach(enemy => {
-                    const dx = enemy.x - game.player.x;
-                    const dz = enemy.z - game.player.z;
-                    const dist = Math.sqrt(dx * dx + dz * dz);
-                    if (dist < 10) {
-                        enemy.health -= power.damage;
-                    }
-                });
-            } else {
-                projectiles.push({
-                    x: game.player.x,
-                    y: 1,
-                    z: game.player.z,
-                    vx: Math.cos(game.player.angle) * 0.3,
-                    vz: Math.sin(game.player.angle) * 0.3,
-                    damage: power.damage,
-                    color: power.color,
-                    life: 200
-                });
-            }
-            
-            updatePowerUI();
-        }
-        
-        // UI Functions
-        function updateUI() {
-            document.getElementById('health-text').textContent = Math.max(0, Math.floor(game.health));
-            document.getElementById('health-fill').style.width = Math.max(0, (game.health / game.maxHealth) * 100) + '%';
-            document.getElementById('score').textContent = game.score;
-            document.getElementById('coins').textContent = game.coins;
-        }
-        
-        function updatePowerUI() {
-            const powersContainer = document.getElementById('powers');
-            powersContainer.innerHTML = '';
-            
-            const now = Date.now();
-            powers.forEach(power => {
-                const powerDiv = document.createElement('div');
-                powerDiv.className = 'power';
-                
-                const lastUsed = powerCooldowns.get(power.id) || 0;
-                const timeLeft = Math.max(0, power.cooldown - (now - lastUsed));
-                
-                if (timeLeft > 0) {
-                    powerDiv.classList.add('cooldown');
-                    powerDiv.innerHTML = `
-                        <div class="power-key">${power.key}</div>
-                        <div>${(timeLeft / 1000).toFixed(1)}s</div>
-                    `;
-                } else {
-                    powerDiv.innerHTML = `
-                        <div class="power-key">${power.key}</div>
-                        <div style="font-size: 10px">${power.name}</div>
-                    `;
-                }
-                
-                powerDiv.title = power.description;
-                powerDiv.onclick = () => usePower(power);
-                powersContainer.appendChild(powerDiv);
-            });
-        }
-        
-        function toggleShop() {
-            game.isPaused = !game.isPaused;
-            const shop = document.getElementById('shop');
-            shop.classList.toggle('active');
-            
-            if (game.isPaused) {
-                updateShopUI();
-            }
-        }
-        
-        function updateShopUI() {
-            const shopItemsContainer = document.getElementById('shop-items');
-            shopItemsContainer.innerHTML = '';
-            
-            shopItems.forEach(item => {
-                const itemDiv = document.createElement('div');
-                itemDiv.className = 'shop-item';
-                itemDiv.innerHTML = `
-                    <div>
-                        <strong>${item.name}</strong><br>
-                        Cost: ${item.cost} coins
-                    </div>
-                    <button onclick="buyItem(${item.id})" ${game.coins < item.cost ? 'disabled' : ''}>
-                        Buy
-                    </button>
-                `;
-                shopItemsContainer.appendChild(itemDiv);
-            });
-        }
-        
-        window.buyItem = function(itemId) {
-            const item = shopItems.find(i => i.id === itemId);
-            if (item && game.coins >= item.cost) {
-                game.coins -= item.cost;
-                item.effect();
-                updateShopUI();
-                updateUI();
-            }
-        };
-        
-        document.getElementById('close-shop').onclick = toggleShop;
-        
-        function killEnemy(enemy) {
-            const index = enemies.indexOf(enemy);
-            if (index > -1) {
-                enemies.splice(index, 1);
-                game.score += 10;
-                game.coins += 5;
-                game.enemiesDefeated++;
-                updateUI();
-            }
-        }
-        
-        function damagePlayer(amount) {
-            if (shieldActive) return;
-            
-            game.health -= amount;
-            updateUI();
-            
-            if (game.health <= 0) {
-                gameOver();
-            }
-        }
-        
-        function gameOver() {
-            game.isGameOver = true;
-            document.getElementById('final-score').textContent = game.score;
-            document.getElementById('enemies-defeated').textContent = game.enemiesDefeated;
-            document.getElementById('game-over').classList.add('active');
-        }
-        
-        document.getElementById('restart-btn').onclick = function() {
-            location.reload();
-        };
-        
-        // 3D Rendering
-        function project3D(x, y, z) {
-            const dx = x - game.player.x;
-            const dy = y - 1;
-            const dz = z - game.player.z;
-            
-            const cosA = Math.cos(game.player.angle);
-            const sinA = Math.sin(game.player.angle);
-            
-            const rx = dx * cosA - dz * sinA;
-            const rz = dx * sinA + dz * cosA;
-            
-            if (rz <= 0.1) return null;
-            
-            const scale = 400 / rz;
-            const screenX = canvas.width / 2 + rx * scale;
-            const screenY = canvas.height / 2 - dy * scale;
-            const size = scale;
-            
-            return { x: screenX, y: screenY, size: size, distance: rz };
-        }
-        
-        function drawGame() {
-            // Clear and draw sky/ground
-            ctx.fillStyle = '#87ceeb';
-            ctx.fillRect(0, 0, canvas.width, canvas.height / 2);
-            ctx.fillStyle = '#228B22';
-            ctx.fillRect(0, canvas.height / 2, canvas.width, canvas.height / 2);
-            
-            // Draw grid
-            ctx.strokeStyle = '#196619';
-            ctx.lineWidth = 1;
-            for (let i = -20; i <= 20; i += 2) {
-                const start1 = project3D(i, 0, -20);
-                const end1 = project3D(i, 0, 20);
-                if (start1 && end1) {
-                    ctx.beginPath();
-                    ctx.moveTo(start1.x, start1.y);
-                    ctx.lineTo(end1.x, end1.y);
-                    ctx.stroke();
-                }
-                
-                const start2 = project3D(-20, 0, i);
-                const end2 = project3D(20, 0, i);
-                if (start2 && end2) {
-                    ctx.beginPath();
-                    ctx.moveTo(start2.x, start2.y);
-                    ctx.lineTo(end2.x, end2.y);
-                    ctx.stroke();
-                }
-            }
-            
-            // Draw enemies
-            const sortedEnemies = enemies.map(e => ({
-                enemy: e,
-                pos: project3D(e.x, e.y + 0.5, e.z)
-            })).filter(e => e.pos).sort((a, b) => b.pos.distance - a.pos.distance);
-            
-            sortedEnemies.forEach(({enemy, pos}) => {
-                ctx.fillStyle = '#ff0000';
-                ctx.fillRect(pos.x - pos.size / 2, pos.y - pos.size, pos.size, pos.size);
-                
-                // Health bar
-                const healthPercent = enemy.health / 50;
-                ctx.fillStyle = '#333';
-                ctx.fillRect(pos.x - pos.size / 2, pos.y - pos.size - 10, pos.size, 5);
-                ctx.fillStyle = '#00ff00';
-                ctx.fillRect(pos.x - pos.size / 2, pos.y - pos.size - 10, pos.size * healthPercent, 5);
-            });
-            
-            // Draw projectiles
-            projectiles.forEach(proj => {
-                const pos = project3D(proj.x, proj.y, proj.z);
-                if (pos) {
-                    ctx.fillStyle = proj.color;
-                    ctx.beginPath();
-                    ctx.arc(pos.x, pos.y, pos.size * 0.3, 0, Math.PI * 2);
-                    ctx.fill();
-                }
-            });
-            
-            // Draw crosshair
-            ctx.strokeStyle = 'white';
-            ctx.lineWidth = 2;
-            const cx = canvas.width / 2;
-            const cy = canvas.height / 2;
-            ctx.beginPath();
-            ctx.moveTo(cx - 10, cy);
-            ctx.lineTo(cx + 10, cy);
-            ctx.moveTo(cx, cy - 10);
-            ctx.lineTo(cx, cy + 10);
-            ctx.stroke();
-            
-            // Draw shield effect
-            if (shieldActive) {
-                ctx.strokeStyle = '#8800ff';
-                ctx.lineWidth = 5;
-                ctx.beginPath();
-                ctx.arc(canvas.width / 2, canvas.height / 2, 100, 0, Math.PI * 2);
-                ctx.stroke();
-            }
-        }
-        
-        // Game loop
-        function update() {
-            if (game.isGameOver || game.isPaused) {
-                drawGame();
-                requestAnimationFrame(update);
-                return;
-            }
-            
-            const now = Date.now();
-            
-            // Update shield
-            if (shieldActive && now > shieldEndTime) {
-                shieldActive = false;
-            }
-            
-            // Player movement
-            if (keys['w']) {
-                game.player.x += Math.cos(game.player.angle) * game.player.speed;
-                game.player.z += Math.sin(game.player.angle) * game.player.speed;
-            }
-            if (keys['s']) {
-                game.player.x -= Math.cos(game.player.angle) * game.player.speed;
-                game.player.z -= Math.sin(game.player.angle) * game.player.speed;
-            }
-            if (keys['a']) {
-                game.player.x -= Math.cos(game.player.angle + Math.PI / 2) * game.player.speed;
-                game.player.z -= Math.sin(game.player.angle + Math.PI / 2) * game.player.speed;
-            }
-            if (keys['d']) {
-                game.player.x += Math.cos(game.player.angle + Math.PI / 2) * game.player.speed;
-                game.player.z += Math.sin(game.player.angle + Math.PI / 2) * game.player.speed;
-            }
-            
-            // Camera rotation
-            if (keys['arrowleft']) game.player.angle -= 0.05;
-            if (keys['arrowright']) game.player.angle += 0.05;
-            
-            // Spawn enemies
-            if (now - lastEnemySpawn > 2000 && enemies.length < 15) {
-                createEnemy();
-                lastEnemySpawn = now;
-            }
-            
-            // Update enemies
-            for (let i = enemies.length - 1; i >= 0; i--) {
-                const enemy = enemies[i];
-                
-                const dx = game.player.x - enemy.x;
-                const dz = game.player.z - enemy.z;
-                const dist = Math.sqrt(dx * dx + dz * dz);
-                
-                if (dist > 0.1) {
-                    enemy.x += (dx / dist) * enemy.speed;
-                    enemy.z += (dz / dist) * enemy.speed;
-                }
-                
-                if (dist < 1.5) {
-                    damagePlayer(0.5);
-                }
-                
-                if (enemy.health <= 0) {
-                    killEnemy(enemy);
-                }
-            }
-            
-            // Update projectiles
-            for (let i = projectiles.length - 1; i >= 0; i--) {
-                const proj = projectiles[i];
-                proj.x += proj.vx;
-                proj.z += proj.vz;
-                proj.life--;
-                
-                if (proj.life <= 0) {
-                    projectiles.splice(i, 1);
-                    continue;
-                }
-                
-                // Check collision with enemies
-                for (let j = 0; j < enemies.length; j++) {
-                    const enemy = enemies[j];
-                    const dx = proj.x - enemy.x;
-                    const dz = proj.z - enemy.z;
-                    const dist = Math.sqrt(dx * dx + dz * dz);
-                    
-                    if (dist < 1) {
-                        enemy.health -= proj.damage;
-                        projectiles.splice(i, 1);
-                        break;
-                    }
-                }
-            }
-            
-            drawGame();
-            updatePowerUI();
-            requestAnimationFrame(update);
-        }
-        
-        // Initialize
-        updateUI();
-        updatePowerUI();
-        update();
-    </script>
+
+    <!-- HUD (hub + combat) -->
+    <div id="hud" style="display:none">
+        <div class="hud-name" id="h-name">Time Patroller</div>
+        <div class="hud-row">⚡ Lv.<span id="h-level">1</span></div>
+        <div class="bar-wrap"><div id="h-xp-fill" style="width:0%"></div></div>
+        <div class="hud-row" style="font-size:11px">
+            XP: <span id="h-xp">0</span>/<span id="h-xpnext">150</span>
+        </div>
+        <div class="hud-row">❤️ <span id="h-hp">100</span>/<span id="h-maxhp">100</span></div>
+        <div class="bar-wrap"><div id="h-hp-fill" style="width:100%"></div></div>
+        <div class="hud-row">💰 <span id="h-coins">0</span></div>
+    </div>
+
+    <!-- Controls hint -->
+    <div id="controls-hint" style="display:none">
+        <h3>Controls</h3>
+        <p>WASD – Move</p>
+        <p>← → – Look</p>
+        <p>1-0 – Powers</p>
+        <p>E – Interact</p>
+        <p>B – Shop</p>
+    </div>
+
+    <!-- Combat level name banner -->
+    <div id="combat-level-name" style="display:none"></div>
+
+    <!-- Powers bar -->
+    <div id="powers-bar" style="display:none"></div>
+
+    <!-- MISSION SELECT -->
+    <div id="mission-select" style="display:none">
+        <button id="close-missions-btn">✕ Close</button>
+        <h2>📋 Parallel Quests</h2>
+        <p class="ms-sub">Complete quests to unlock new powers. Quests must be cleared in order.</p>
+        <div id="missions-list"></div>
+    </div>
+
+    <!-- LEVEL COMPLETE -->
+    <div id="level-complete-screen" style="display:none">
+        <h2>✅ Mission Complete!</h2>
+        <div id="lc-level-name"></div>
+        <div class="lc-row">⚡ XP Earned: <strong id="lc-xp">0</strong></div>
+        <div class="lc-row">💰 Coins Earned: <strong id="lc-coins">0</strong></div>
+        <div id="lc-power"></div>
+        <div id="lc-charlevel"></div>
+        <button id="lc-continue-btn">Return to Conton City 🏙️</button>
+    </div>
+
+    <!-- GAME OVER -->
+    <div id="game-over-screen" style="display:none">
+        <h2>💀 Time Patrol Failed</h2>
+        <p>The timeline has been distorted…</p>
+        <p>Enemies Defeated: <strong id="go-score">0</strong></p>
+        <button id="respawn-btn">🏥 Respawn in Conton City</button>
+    </div>
+
+    <!-- SHOP -->
+    <div id="shop" style="display:none">
+        <button id="close-shop-btn">✕ Close</button>
+        <h2>🛒 Z-Store</h2>
+        <p class="shop-sub">Capsule Corp Technology — Upgrade your Time Patroller</p>
+        <p class="shop-wallet">💰 Coins: <strong id="shop-coins">0</strong></p>
+        <div id="shop-items"></div>
+    </div>
+
+    <!-- DIALOGUE -->
+    <div id="dialogue" style="display:none">
+        <div id="dialogue-name"></div>
+        <div id="dialogue-text"></div>
+        <button id="dialogue-close-btn">[E] Close</button>
+    </div>
+
+</div>
+
+<script src="game.js"></script>
 </body>
 </html>
